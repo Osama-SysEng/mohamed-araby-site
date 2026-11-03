@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>محمد العربي عبدالسميع إبراهيم | ملف الإنجاز المهني</title>
+  <meta name="description" content="ملف إنجاز المعلم محمد العربي عبدالسميع إبراهيم؛ سيرة ذاتية وشواهد تعليمية وأنشطة ومشروعات تقنية.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Top Announcement / Bar -->
+  <div class="top-bar">
+    <div class="container top-bar-inner">
+      <span>مرحباً بكم في ملف الإنجاز المهني للمعلم <strong>محمد العربي عبدالسميع إبراهيم</strong></span>
+      <button id="toggle-edit-btn" class="edit-mode-btn" type="button">
+        <span class="icon">✏️</span> <span id="edit-btn-text">تفعيل وضع التعديل المباشر</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Header & Navigation -->
+  <header class="site-header" id="top">
+    <div class="container header-inner">
+      <a class="brand" href="#top">
+        <div class="brand-avatar">م</div>
+        <div class="brand-text">
+          <strong id="site-title-name" contenteditable="false">محمد العربي عبدالسميع</strong>
+          <small id="site-title-sub" contenteditable="false">معلم حاسب آلي · ملف الإنجاز</small>
+        </div>
+      </a>
+
+      <button class="menu-toggle" type="button" aria-label="فتح القائمة" id="menu-toggle">
+        <span></span><span></span><span></span>
+      </button>
+
+      <nav class="primary-nav" id="primary-nav">
+        <a class="nav-link active" href="#hero">الرئيسية</a>
+        <a class="nav-link" href="#profile">السيرة الذاتية</a>
+        <a class="nav-link" href="#carousel-section">الشواهد المتحركة</a>
+        <a class="nav-link" href="#teaching">التدريس والأنشطة</a>
+        <a class="nav-link" href="#enrichment">البرامج الإثرائية</a>
+        <a class="nav-link nav-contact" href="#contact">التواصل</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- Hero Section -->
+    <section class="hero-section" id="hero">
+      <div class="container hero-inner">
+        <div class="hero-content">
+          <div class="badge">ملف الإنجاز المهني والتعليمي</div>
+          <h1 id="hero-name" contenteditable="false">محمد العربي<br><span class="highlight">عبدالسميع إبراهيم</span></h1>
+          <p class="hero-desc" id="hero-desc" contenteditable="false">
+            معلم حاسب آلي متميز، يسعى لتطبيق أحدث التقنيات الحديثة واستراتيجيات التعلم التفاعلي لتنمية مهارات التفكير البرمجي والحاسوبي لدى الطلاب.
+          </p>
+
+          <div class="hero-pills">
+            <div class="pill">
+              <span class="pill-icon">🎓</span>
+              <div>
+                <strong>بكالوريوس تربية نوعية</strong>
+                <small>جامعة المنصورة · 2010</small>
+              </div>
+            </div>
+            <div class="pill">
+              <span class="pill-icon">💻</span>
+              <div>
+                <strong>معلم حاسب آلي</strong>
+                <small>خبرة في الإمارات ومصر والسعودية</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-actions">
+            <a href="#carousel-section" class="btn btn-primary">عرض شواهد الإنجاز (سلايدر) ←</a>
+            <a href="#profile" class="btn btn-outline">السيرة الذاتية المفصلة</a>
+          </div>
+        </div>
+
+        <!-- Featured Carousel in Hero -->
+        <div class="hero-visual">
+          <div class="hero-card">
+            <div class="slider-container hero-slider" id="hero-slider">
+              <div class="slider-wrapper" id="hero-slider-wrapper">
+                <div class="slide active"><img src="images/img_64.jpeg" alt="محمد العربي عبدالسميع - ملف الإنجاز"></div>
+                <div class="slide"><img src="images/img_01.jpeg" alt="أنشطة تعليمية"></div>
+                <div class="slide"><img src="images/img_24.jpeg" alt="مشروعات وتقنيات"></div>
+                <div class="slide"><img src="images/img_62.jpeg" alt="روبوت وتفكير حاسوبي"></div>
+              </div>
+              <button class="slider-btn prev" id="hero-prev" aria-label="السابق">❮</button>
+              <button class="slider-btn next" id="hero-next" aria-label="التالي">❯</button>
+              <div class="slider-dots" id="hero-dots"></div>
+            </div>
+            <div class="hero-card-caption">
+              <strong>معرض الصور الشامل</strong>
+              <span>امكانية تحريك الصور والتنقل الآلي بين الشواهد</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Profile & CV Section -->
+    <section class="section profile-section" id="profile">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-badge">01 / السيرة الذاتية</span>
+          <h2>المؤهلات والخبرات <em>المهنية</em></h2>
+          <p>ملخص شامل لبيانات المؤهل والتخصص والخبرات الميدانية والمهارات التقنية.</p>
+        </div>
+
+        <div class="profile-grid">
+          <!-- Main Info -->
+          <div class="card profile-main-card">
+            <h3>البيانات الشخصية والمؤهل</h3>
+            <ul class="info-list">
+              <li><strong>الاسم الكامل:</strong> <span id="cv-fullname" contenteditable="false">محمد العربي عبدالسميع إبراهيم</span></li>
+              <li><strong>التخصص:</strong> <span id="cv-spec" contenteditable="false">معلم حاسب آلي وتكنولوجيا التعليم</span></li>
+              <li><strong>المؤهل العلمي:</strong> <span id="cv-degree" contenteditable="false">بكالوريوس تربية نوعية - جامعة المنصورة (2010) - تقدير عام جيد جداً</span></li>
+              <li><strong>مكان الإقامة:</strong> <span id="cv-residence" contenteditable="false">الإمارات العربية المتحدة</span></li>
+              <li><strong>الجنسية:</strong> <span id="cv-nationality" contenteditable="false">مصري</span></li>
+              <li><strong>تاريخ الميلاد:</strong> <span id="cv-dob" contenteditable="false">10 يوليو 1989 (المنصورة)</span></li>
+            </ul>
+          </div>
+
+          <!-- Skills Card -->
+          <div class="card skills-card">
+            <h3>المهارات والقدرات التقنية</h3>
+            <div class="skills-tags">
+              <span class="tag">صيانة الحاسب الآلي</span>
+              <span class="tag">تصميم موقع الويب (HTML/JS)</span>
+              <span class="tag">تصميم وتطوير الألعاب</span>
+              <span class="tag">الروبوت والتفكير الحاسوبي</span>
+              <span class="tag">نظام نور التعليمي</span>
+              <span class="tag">التعلم الرقمي والتفاعلي</span>
+              <span class="tag">إدارة المنصات التعليمية</span>
+            </div>
+          </div>
+
+          <!-- Experience Card -->
+          <div class="card experience-card full-width">
+            <h3>الخبرات العملية والمسيرة المهنية</h3>
+            <div class="timeline">
+              <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                  <h4>المدرسة العربية الخاصة</h4>
+                  <p>إمارة رأس الخيمة - الإمارات العربية المتحدة</p>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                  <h4>مدارس العاصمة</h4>
+                  <p>العمل كمعلم حاسب آلي لمدة 4 سنوات</p>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                  <h4>مدارس الإبداع</h4>
+                  <p>تدريس الحاسب الآلي للمرحلتين الابتدائية والثانوية</p>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                  <h4>العمل الإداري والتقني</h4>
+                  <p>إدارة وتشغيل نظام نور لم المتابعة التعليمية لمدة عامين</p>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                  <h4>أكاديمية العلوم والتكنولوجيا & الزرقاء</h4>
+                  <p>معلم حاسب آلي بجامعة المنصورة وأكاديمية الزرقاء بالرياض</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Moving Image Carousel Section (الميزة المطلوبة: تحريك الصور) -->
+    <section class="section carousel-section" id="carousel-section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-badge">02 / المعرض المتحرك</span>
+          <h2>سلايدر شواهد الإنجاز <em>(معرض الصور المتحرك)</em></h2>
+          <p>تصفح الشواهد والأنشطة التعليمية عبر سلايدر متحرك تلقائياً مع إمكانية التحكم والتكبير.</p>
+        </div>
+
+        <!-- Filter Buttons -->
+        <div class="filter-bar" id="gallery-filters">
+          <button class="filter-btn active" data-filter="all">جميع الشواهد (69 صورة)</button>
+          <button class="filter-btn" data-filter="activities">الأنشطة المدرسية</button>
+          <button class="filter-btn" data-filter="bebras">مسابقة بيبراس والتفكير الحاسوبي</button>
+          <button class="filter-btn" data-filter="certificates">المؤهلات والسيرة</button>
+          <button class="filter-btn" data-filter="lab">معمل الحاسب والتدريس</button>
+        </div>
+
+        <!-- Main Featured Animated Carousel -->
+        <div class="main-slider-card">
+          <div class="main-slider-header">
+            <div class="slider-status">
+              <span class="live-dot"></span>
+              <span>عرض متحرك للصور <strong id="slider-count-text">1 / 15</strong></span>
+            </div>
+            <div class="slider-controls-top">
+              <button class="btn-sm" id="auto-play-toggle">⏸ إيقاف المؤقت</button>
+              <button class="btn-sm" id="fullscreen-btn">⛶ ملء الشاشة</button>
+            </div>
+          </div>
+
+          <div class="main-carousel" id="main-carousel">
+            <div class="carousel-track" id="carousel-track">
+              <!-- Dynamically populated via JavaScript with images -->
+            </div>
+            <button class="carousel-arrow prev" id="carousel-prev" aria-label="الصورة السابقة">❮</button>
+            <button class="carousel-arrow next" id="carousel-next" aria-label="الصورة التالية">❯</button>
+          </div>
+
+          <!-- Thumbnails Strip below slider -->
+          <div class="thumbnails-wrapper">
+            <div class="thumbnails-track" id="thumbnails-track">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Grid View of all images for quick access -->
+        <div class="gallery-toggle-bar">
+          <h3>عرض جميع الصور في شبكة</h3>
+          <button id="toggle-grid-btn" class="btn btn-outline btn-sm">عرض / إخفاء الشبكة</button>
+        </div>
+
+        <div class="gallery-grid" id="gallery-grid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Teaching & Classroom Practice -->
+    <section class="section teaching-section" id="teaching">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-badge">03 / التدريس والتطبيق</span>
+          <h2>الممارسات <em>والاستراتيجيات التعليمية</em></h2>
+          <p>شواهد مصورة واستراتيجيات متبعة داخل معمل الحاسب والغرفة الصفية.</p>
+        </div>
+
+        <div class="teaching-grid">
+          <div class="teaching-card">
+            <div class="teaching-img">
+              <img src="images/img_06.jpeg" alt="معمل الحاسب الآلي">
+            </div>
+            <div class="teaching-body">
+              <h3>التطبيق العملي بمعمل الحاسب</h3>
+              <p>تفعيل الحصص العملية والتطبيق الفردي والجماعي للطلاب لتثبيت المهارات البرمجية.</p>
+            </div>
+          </div>
+
+          <div class="teaching-card">
+            <div class="teaching-img">
+              <img src="images/img_14.jpeg" alt="مسابقة بيبراس للتفكير الحاسوبي">
+            </div>
+            <div class="teaching-body">
+              <h3>التفكير الحاسوبي و Bebras</h3>
+              <p>تدريب وتأهيل الطلاب للمشاركة في مسابقات البرمجة العالمية والتفكير المنطقي.</p>
+            </div>
+          </div>
+
+          <div class="teaching-card">
+            <div class="teaching-img">
+              <img src="images/img_24.jpeg" alt="أنشطة الروبوت">
+            </div>
+            <div class="teaching-body">
+              <h3>الأنشطة الإثرائية والروبوت</h3>
+              <p>دمج أنشطة التركيب والبرمجة لتشجيع الابتكار وحل المشكلات لدى الموهوبين.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Enrichment Programs -->
+    <section class="section enrichment-section" id="enrichment">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-badge">04 / البرامج الإثرائية</span>
+          <h2>الأنشطة والبرامج <em>الداعمة</em></h2>
+        </div>
+
+        <div class="enrichment-box">
+          <div class="enrichment-item">
+            <div class="enrichment-icon">🤖</div>
+            <h4>الروبوت والابتكار</h4>
+            <p>تدريب الطلاب على البرمجة والتحكم بالقطع البرمجية والمشروعات الذكية.</p>
+          </div>
+          <div class="enrichment-item">
+            <div class="enrichment-icon">🏆</div>
+            <h4>المسابقات والتميز</h4>
+            <p>مشاركات مدرسية وولائية في أنشطة الحاسب والتطبيقات الإلكترونية.</p>
+          </div>
+          <div class="enrichment-item">
+            <div class="enrichment-icon">📊</div>
+            <h4>نظام نور والتقويم</h4>
+            <p>إدارة بيانات الطلاب والتقويم الرقمي وإعداد خطط المتابعة.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="section contact-section" id="contact">
+      <div class="container">
+        <div class="contact-card">
+          <div class="contact-info">
+            <span class="section-badge light">تواصل مع المعلم</span>
+            <h2>محمد العربي عبدالسميع إبراهيم</h2>
+            <p>يسعدني التواصل والتعاون المباشر لتبادل الخبرات وتطوير الممارسات التعليمية.</p>
+
+            <div class="contact-details">
+              <a href="tel:0569293651" class="contact-item">
+                <span class="icon">📞</span>
+                <div>
+                  <small>الهاتف (الإمارات)</small>
+
+                  <strong dir="ltr">056 929 3651</strong>
+                </div>
+              </a>
+
+              <a href="https://wa.me/201014654790" target="_blank" rel="noopener" class="contact-item">
+                <span class="icon">💬</span>
+                <div>
+                  <small>واتساب مباشرة</small>
+                  <strong dir="ltr">0020 101 465 4790</strong>
+                </div>
+              </a>
+
+              <a href="mailto:Elaraby913@gmail.com" class="contact-item">
+                <span class="icon">✉️</span>
+                <div>
+                  <small>البريد الإلكتروني</small>
+                  <strong dir="ltr">Elaraby913@gmail.com</strong>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>© جميع الحقوق محفوظة للمعلم <strong>محمد العربي عبدالسميع إبراهيم</strong></p>
+      <a href="#top" class="back-top">العودة للأعلى ↑</a>
+    </div>
+  </footer>
+
+  <!-- Lightbox Modal -->
+  <div class="lightbox-modal" id="lightbox">
+    <button class="lightbox-close" id="lightbox-close">×</button>
+    <div class="lightbox-content">
+      <img src="" id="lightbox-img" alt="عرض الصورة المكبرة">
+      <p id="lightbox-caption"></p>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
