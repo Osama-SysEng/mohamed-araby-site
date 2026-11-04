@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>مراقبة ومتابعة المخزون</title>
+<script src="xlsx.full.min.js"></script>
+<style>
+:root{
+--bg:#f4f6fb;--card:#fff;--accent:#4361ee;--red:#e63946;--green:#2a9d8f;--orange:#f4a261;--txt:#1d2a3b;--muted:#6b778c;--border:#dde3ed;--radius:12px;--shadow:0 2px 12px rgba(28,52,95,.08);
+--bg-dark:#121212;--card-dark:#1e1e1e;--txt-dark:#e0e0e0;--muted-dark:#a0a0a0;--border-dark:#333;--accent-dark:#64b5f6;
+}
+*[data-theme="dark"]{
+--bg:#121212;--card:#1e1e1e;--txt:#e0e0e0;--muted:#a0a0a0;--border:#333;--accent:#64b5f6;--red:#cf6679;--green:#70c49b;--orange:#f3b271;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Tahoma,sans-serif;background:var(--bg);color:var(--txt);line-height:1.65;transition:background .3s,color .3s}
+a{color:var(--accent)}
+.wrap{max-width:1400px;margin:0 auto;padding:24px}
+
+/* topbar with theme toggle */
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 28px;background:var(--accent);color:#fff;border-radius:var(--radius);margin-bottom:24px;box-shadow:var(--shadow);position:relative}
+.topbar h1{font-size:1.55rem;font-weight:700}
+.topbar .badge{background:rgba(255,255,255,.2);padding:4px 12px;border-radius:20px;font-size:.82rem}
+.theme-toggle{background:rgba(255,255,255,.2);border:none;color:#fff;padding:8px 16px;border-radius:20px;cursor:pointer;font-size:.9rem;display:flex;align-items:center;gap:6px;transition:.2s}
+.theme-toggle:hover{background:rgba(255,255,255,.3)}
+
+/* cards */
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;margin-bottom:24px}
+.card h2{font-size:1.15rem;margin-bottom:16px;color:var(--txt);border-right:4px solid var(--accent);padding-right:10px}
+
+/* upload zones */
+.dropzone{border:2px dashed var(--border);border-radius:var(--radius);padding:36px;text-align:center;cursor:pointer;transition:.2s;background:#fafbfd}
+.dropzone:hover,.dropzone.drag{border-color:var(--accent);background:#f0f4ff}
+.dropzone.loaded{border-color:var(--green);background:#eef9f7}
+.dropzone h3{margin-bottom:6px}
+.dropzone p{color:var(--muted);font-size:.88rem}
+.dropzone input{display:none}
+.dropzone .fname{margin-top:8px;font-weight:600;color:var(--green)}
+
+/* branch zones grid */
+.branch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;margin-top:12px}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px}
+.stat{background:linear-gradient(135deg,var(--accent),#7209b7);color:#fff;border-radius:var(--radius);padding:20px;text-align:center}
+.stat.red{background:linear-gradient(135deg,#e63946,#f4a261)}
+.stat.green{background:linear-gradient(135deg,#2a9d8f,#457b9d)}
+.stat.orange{background:linear-gradient(135deg,#f4a261,#e76f51)}
+.stat .num{font-size:2rem;font-weight:800}
+.stat .lbl{font-size:.85rem;opacity:.9;margin-top:4px}
+
+/* table */
+.tbl-wrap{overflow-x:auto;margin-top:8px}
+table{width:100%;border-collapse:collapse;font-size:.88rem}
+th,td{padding:11px 14px;text-align:right;border-bottom:1px solid var(--border)}
+th{background:#f0f3f9;font-weight:700;position:sticky;top:0}
+tr:hover{background:#f7f9ff}
+.diff-row{background:#fff0f0}
+.diff-row td:first-child::before{content:"⚠ ";color:var(--red)}
+.ok-row td:first-child::before{content:"✓ ";color:var(--green)}
+.badge-diff{background:var(--red);color:#fff;padding:2px 8px;border-radius:10px;font-size:.78rem}
+.badge-ok{background:var(--green);color:#fff;padding:2px 8px;border-radius:10px;font-size:.78rem}
+
+/* sections hidden */
+.hidden{display:none}
+
+/* filter bar */
+.filter-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.filter-bar select,.filter-bar input{padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:.88rem}
+.filter-bar input{flex:1;min-width:180px}
+
+/* spinner */
+.spinner{display:inline-block;width:18px;height:18px;border:3px solid #fff;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;margin-left:8px;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1d2a3b;color:#fff;padding:12px 22px;border-radius:var(--radius);font-size:.9rem;z-index:999;opacity:0;transition:.3s;pointer-events:none}
+.toast.show{opacity:1}
+
+/* branch dashboard */
+.branch-dashboard{margin-top:24px}
+.branch-title{font-size:1.2rem;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.branch-close{background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer;padding:4px;border-radius:50%;transition:.2s}
+.branch-close:hover{color:var(--red);background:rgba(230,57,70,.1)}
+
+/* column width fixes */
+table th:nth-child(1),table td:nth-child(1){min-width:180px}
+table th:nth-child(2),table td:nth-child(2){min-width:140px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <h1>📦 مراقبة ومتابعة المخزون</h1>
+    <span class="badge">نظام مطابقة ذكي — الفروع vs المركز</span>
+    <button class="theme-toggle" id="theme-toggle" aria-label="تبديل الوضع الداكن/الفاتح">
+      <span id="theme-icon">🌙</span>
+      <span>الوضع الداكن</span>
+    </button>
+  </div>
+
+  <!-- 1) Main upload -->
+  <div class="card">
+    <h2>الشيت الرئيسي (الوارد والمنصرف بالمركز)</h2>
+    <p style="color:var(--muted);margin-bottom:12px;font-size:.85rem">يُحمّل ملف Excel يحتوي أعمدة: الصنف / القسم / الوارد / المنصرف. يمكن تسمية الأعمدة بأي شكل عربي أو إنجليزي.</p>
+    <div class="dropzone" id="zone-main" onclick="document.getElementById('inp-main').click()">
+      <h3>📥 ارفع الشيت الرئيسي هنا</h3>
+      <p>اسحب الملف وأفلته أو انقر للاختيار</p>
+      <input type="file" id="inp-main" accept=".xlsx,.xls,.csv">
+      <div class="fname" id="name-main"></div>
+    </div>
+  </div>
+
+  <!-- 2) Branch uploads -->
+  <div class="card">
+    <h2>شيتات الفروع (المستلم من كل فرع)</h2>
+    <p style="color:var(--muted);font-size:.85rem">ارفع شيتاً لكل فرع لاستلامه. سيتم مطابقة كل فرع مع ما تم صرفه من المركز.</p>
+    <div class="branch-grid" id="branch-grid"></div>
+    <div style="margin-top:14px">
+      <button class="add-branch-btn" onclick="addBranch()">+ إضافة فرع جديد</button>
+    </div>
+  </div>
+
+  <!-- 3) Dashboard (hidden until main uploaded) -->
+  <div id="dashboard" class="hidden">
+    <div class="stats" id="stats-row">
+      <div class="stat green"><div class="num" id="st-ok">—</div><div class="lbl">صنف مطابق</div></div>
+      <div class="stat red"><div class="num" id="st-diff">—</div><div class="lbl">صنف مختلف</div></div>
+      <div class="stat orange"><div class="num" id="st-branches">—</div><div class="lbl">فروع مرفوعة</div></div>
+      <div class="stat"><div class="num" id="st-total">—</div><div class="lbl">إجمالي السجلات</div></div>
+    </div>
+
+    <div class="filter-bar">
+      <select id="filter-branch" onchange="renderTable()">
+        <option value="all">كل الفروع</option>
+      </select>
+      <select id="filter-status" onchange="renderTable()">
+        <option value="all">الكل</option>
+        <option value="diff">مختلف فقط</option>
+        <option value="ok">مطابق فقط</option>
+      </select>
+      <input type="text" id="filter-search" placeholder="بحث باسم الصنف…" oninput="renderTable()">
+    </div>
+
+    <div class="tbl-wrap" style="max-height:600px;overflow:auto">
+      <table id="tbl-results">
+        <thead>
+          <tr>
+            <th>الصنف</th>
+            <th>الفرع</th>
+            <th>الوارد بالمركز</th>
+            <th>المنصرف من المركز</th>
+            <th>المستلم بالفرع</th>
+            <th>الفارق</th>
+            <th>الحالة</th>
+          </tr>
+        </thead>
+        <tbody id="tbl-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 4) Individual Branch Dashboards (hidden by default) -->
+  <div id="branch-dashboards"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ── State ── */
+let mainData = null;
+let branches = []; // {idx, name, data, dashboardVisible}
+let branchCounter = 0;
+let currentTheme = localStorage.getItem('theme') || 'light';
+
+/* ── Theme handling ── */
+function applyTheme(theme){
+document.documentElement.dataset.theme = theme;
+localStorage.setItem('theme', theme);
+const icon = document.getElementById('theme-icon');
+const label = document.getElementById('theme-toggle').querySelector('span:last-child');
+if(theme === 'dark'){
+icon.textContent = '☀️';
+label.textContent = 'الوضع الفاتح';
+} else {
+icon.textContent = '🌙';
+label.textContent = 'الوضع الداكن';
+}
+}
+document.getElementById('theme-toggle').addEventListener('click', ()=>{
+applyTheme(currentTheme === 'light' ? 'dark' : 'light');
+currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+});
+applyTheme(currentTheme);
+
+/* ── Column detection ── */
+const PAT = {
+name: [/صنف|منتج|اسم|مادة|item|product|material|name/i],
+dept: [/قسم|department|dept|فئة|category/i],
+qtyIn: [/وارد|استلام|مدخل|entry|in|وصول/i],
+qtyOut: [/منصرف|صرف|خرج|مبيعات|sale|out|صادر/i],
+};
+
+function detectCols(headers){
+const r = {name:null,dept:null,qtyIn:null,qtyOut:null};
+headers.forEach((h,i)=>{
+const s = String(h).trim();
+if(!r.name && PAT.name.some(p=>p.test(s))) r.name = i;
+if(!r.dept && PAT.dept.some(p=>p.test(s))) r.dept = i;
+if(!r.qtyIn && PAT.qtyIn.some(p=>p.test(s))) r.qtyIn = i;
+if(!r.qtyOut && PAT.qtyOut.some(p=>p.test(s))) r.qtyOut = i;
+});
+// fallback: first numeric-looking column after name = in, second = out
+if(r.qtyIn==null || r.qtyOut==null){
+const numCols = headers.map((h,i)=>({h,i}))
+.filter(x=>x.i>(r.name??0))
+.filter(x=>!isNaN(Number(String(x.h))))
+.map(x=>x.i);
+if(numCols.length>=1 && r.qtyIn==null) r.qtyIn = numCols[0];
+if(numCols.length>=2 && r.qtyOut==null) r.qtyOut = numCols[1];
+}
+if(r.name==null) r.name = 0;
+return r;
+}
+
+function num(v){
+if(v==null||v==='') return 0;
+const n = Number(String(v).replace(/[,\s]/g,''));
+return isNaN(n)?0:n;
+}
+
+function parseSheet(wb){
+const ws = wb.Sheets[wb.SheetNames[0]];
+const data = XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
+if(data.length<2) return null;
+const headers = data[0].map(h=>String(h).trim());
+const cols = detectCols(headers);
+const items = [];
+for(let r=1;r<data.length;r++){
+const row = data[r];
+if(!row[cols.name]) continue;
+items.push({
+name:    String(row[cols.name]).trim(),
+dept:    cols.dept!=null?String(row[cols.dept]||'').trim():'',
+qtyIn:   num(row[cols.qtyIn]),
+qtyOut:  num(row[cols.qtyOut]),
+});
+}
+return {items, headers, cols};
+}
+
+/* ── File reading ── */
+function readExcel(file, cb){
+const reader = new FileReader();
+reader.onload = e => cb(XLSX.read(e.target.result,{type:'array'}));
+reader.readAsArrayBuffer(file);
+}
+
+/* ── Main upload ── */
+document.getElementById('inp-main').addEventListener('change', e => {
+const f = e.target.files[0];
+if(!f) return;
+document.getElementById('name-main').textContent = '📄 ' + f.name;
+document.getElementById('zone-main').classList.add('loaded');
+readExcel(f, wb => {
+mainData = parseSheet(wb);
+if(!mainData){toast('⚠ لم يتم التعرف على هيكل الشيت الرئيسي');return;}
+toast(`✅ تم تحميل ${mainData.items.length} صنف من الشيت الرئيسي`);
+document.getElementById('dashboard').classList.remove('hidden');
+refreshAll();
+});
+});
+
+// drag-drop for main zone
+const zm = document.getElementById('zone-main');
+zm.addEventListener('dragover', e=>{e.preventDefault();zm.classList.add('drag')});
+zm.addEventListener('dragleave',()=>zm.classList.remove('drag'));
+zm.addEventListener('drop', e=>{
+e.preventDefault();zm.classList.remove('drag');
+const f = e.dataTransfer.files[0];
+if(f) {
+document.getElementById('inp-main').files = e.dataTransfer.files;
+zm.dispatchEvent(new Event('change'));
+}
+});
+
+/* ── Branch management ── */
+function addBranch(){
+branchCounter++;
+const name = prompt('أدخل اسم الفرع', `الفرع ${branchCounter}`);
+if(!name) {branchCounter--; return;}
+const grid = document.getElementById('branch-grid');
+const div = document.createElement('div');
+div.className = 'dropzone';
+div.id = `zone-br-${branchCounter}`;
+div.innerHTML = `
+<h3>🏬 ${name}</h3>
+<p>شيت الاستلام</p>
+<input type="file" accept=".xlsx,.xls,.csv" id="inp-br-${branchCounter}" onchange="loadBranch(this,${branchCounter},'${name}')">
+<div class="fname" id="name-br-${branchCounter}"></div>
+`;
+// drag-drop
+div.addEventListener('dragover', e=>{e.preventDefault();div.classList.add('drag')});
+div.addEventListener('dragleave',()=>div.classList.remove('drag'));
+div.addEventListener('drop', e=>{
+e.preventDefault();div.classList.remove('drag');
+const f = e.dataTransfer.files[0];
+if(f){
+const inp = document.getElementById(`inp-br-${branchCounter}`);
+inp.files = e.dataTransfer.files;
+loadBranch(inp, branchCounter, name);
+}
+});
+grid.appendChild(div);
+}
+
+function loadBranch(inp, idx, name){
+const f = inp.files[0];
+if(!f) return;
+document.getElementById(`name-br-${idx}`).textContent = '📄 ' + f.name;
+const z = document.getElementById(`zone-br-${idx}`);
+z.classList.add('loaded');
+readExcel(f, wb => {
+const pd = parseSheet(wb);
+if(!pd){toast('⚠ شكلي الشيت غير مفهوم');return;}
+let b = branches.find(x=>x.idx===idx);
+if(b) b.data = pd; else branches.push({idx,name,data:pd, dashboardVisible:false});
+toast(`✅ ${name}: ${pd.items.length} صنف`);
+refreshAll();
+});
+}
+
+// init 3 branch zones
+['الفرع 1','الفرع 2','الفرع 3'].forEach(n=>addBranch(n));
+
+/* ── Matching engine ── */
+function normalize(s){
+return String(s||'').trim().toLowerCase()
+.replace(/[^a-z0-9؀-ۿ]/g,'')
+.replace(/ة/g,'ه').replace(/أ|إ|آ|ؤ|ئ/g,'ا');
+}
+
+function fuzzyScore(a,b){
+if(a===b) return 0;
+if(a.includes(b)||b.includes(a)) return Math.abs(a.length-b.length);
+return 999;
+}
+
+function matchItems(main, branch){
+const mMap = {};
+main.items.forEach(it => {
+const k = normalize(it.name);
+if(!mMap[k]) mMap[k] = it;
+});
+
+return branch.items.map(bi => {
+const bk = normalize(bi.name);
+// exact match first
+let mi = mMap[bk];
+if(mi) return makeRow(bi, branch.name, mi, 0);
+// fuzzy — find closest
+let best = null, bestS = 999;
+Object.entries(mMap).forEach(([mk,mv])=>{
+const s = fuzzyScore(mk,bk);
+if(s<bestS){bestS=s;best=mv;}
+});
+// only show if reasonably close (same length diff <= 2)
+if(best && bestS <= 3) return makeRow(bi, branch.name, best, bestS);
+// unmatched
+return makeRow(bi, branch.name, null, 999);
+});
+}
+
+function makeRow(bi, bName, mi, score){
+const received = bi.qtyIn || bi.qtyOut || 0;
+const mainOut = mi ? mi.qtyOut : 0;
+const diff = mi ? (mainOut - received) : null;
+const isDiff = mi ? Math.abs(diff) > 0.001 : false;
+const isMatch = !!mi && score <= 3;
+return {
+itemName: bi.name,
+branchName: bName,
+mainQtyIn: mi ? mi.qtyIn : 0,
+mainQtyOut: mi ? mi.qtyOut : 0,
+received: received,
+diff: diff,
+flag: isDiff ? 'diff' : (isMatch ? 'ok' : 'unmatched'),
+};
+}
+
+/* ── Render ── */
+function refreshAll(){
+if(!mainData || !branches.length) return;
+
+// populate branch filter
+const sel = document.getElementById('filter-branch');
+const prev = sel.value;
+sel.innerHTML = '<option value="all">كل الفروع</option>';
+branches.forEach(b=>{
+const o = document.createElement('option');
+o.value = b.name; o.textContent = b.name;
+sel.appendChild(o);
+});
+if(prev && [...sel.options].some(o=>o.value===prev)) sel.value = prev;
+
+// collect all rows
+let allRows = [];
+branches.forEach(b=>{
+if(!b.data) return;
+allRows = allRows.concat(matchItems(mainData, b.data));
+});
+
+let totalDiff=0, totalOk=0;
+allRows.forEach(r=>{
+if(r.flag==='diff'||r.flag==='unmatched') totalDiff++;
+else totalOk++;
+});
+document.getElementById('st-ok').textContent = totalOk;
+document.getElementById('st-diff').textContent = totalDiff;
+document.getElementById('st-branches').textContent = branches.length;
+document.getElementById('st-total').textContent = allRows.length;
+
+applyFilters(allRows);
+}
+
+function applyFilters(rows){
+const fb = document.getElementById('filter-branch').value;
+const fs = document.getElementById('filter-status').value;
+const fq = document.getElementById('filter-search').value.trim().toLowerCase();
+
+let view = rows;
+if(fb!=='all') view = view.filter(r=>r.branchName===fb);
+if(fs==='diff') view = view.filter(r=>r.flag!=='ok');
+if(fs==='ok') view = view.filter(r=>r.flag==='ok');
+if(fq) view = view.filter(r=>r.itemName.toLowerCase().includes(fq));
+
+const tbody = document.getElementById('tbl-body');
+tbody.innerHTML = '';
+if(!view.length){
+tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:32px">لا توجد نتائج</td></tr>';
+return;
+}
+view.forEach(r=>{
+const tr = document.createElement('tr');
+tr.className = r.flag==='ok'?'ok-row':'diff-row';
+const badge = r.flag==='ok'
+?'<span class="badge-ok">مطابق</span>'
+:'<span class="badge-diff">يحتاج مراجعة</span>';
+const diffStr = r.diff==null
+?'<span style="color:var(--muted)">—</span>'
+:`<span style="color:${r.diff>0?'var(--red)':'var(--green)'};font-weight:700">${r.diff>0?'+':''}${r.diff}</span>`;
+tr.innerHTML = `
+<td>${esc(r.itemName)}</td>
+<td>${esc(r.branchName)}</td>
+<td>${r.mainQtyIn}</td>
+<td>${r.mainQtyOut}</td>
+<td>${r.received}</td>
+<td>${diffStr}</td>
+<td>${badge}</td>
+`;
+tbody.appendChild(tr);
+});
+}
+
+function renderTable(){ applyFilters([]); }
+
+// override refreshAll to store global rows for filter use
+const _refreshAll = refreshAll;
+let _allRows = [];
+window.refreshAll = function(){
+if(!mainData || !branches.length) return;
+let rows = [];
+branches.forEach(b=>{ if(!b.data) return; rows = rows.concat(matchItems(mainData,b.data)); });
+_allRows = rows;
+let totalDiff=0,totalOk=0;
+rows.forEach(r=>{if(r.flag==='diff'||r.flag==='unmatched')totalDiff++;else totalOk++;});
+document.getElementById('st-ok').textContent = totalOk;
+document.getElementById('st-diff').textContent = totalDiff;
+document.getElementById('st-branches').textContent = branches.length;
+document.getElementById('st-total').textContent = rows.length;
+applyFilters(rows);
+};
+
+/* ── Branch Dashboard Management ── */
+function showBranchDashboard(branch){
+const dashboard = document.getElementById('branch-dashboards');
+dashboard.innerHTML = '';
+
+const div = document.createElement('div');
+div.className = 'card';
+div.innerHTML = `
+<div class="branch-title">
+${branch.name}
+<button class="branch-close" onclick="hideBranchDashboard()">✕</button>
+</div>
+<div class="stats" style="gap:12px">
+<div class="stat green"><div class="num" id="branch-st-ok-${branch.idx}">—</div><div class="lbl">مطابق</div></div>
+<div class="stat red"><div class="num" id="branch-st-diff-${branch.idx}">—</div><div class="lbl">مختلف</div></div>
+<div class="stat"><div class="num" id="branch-st-total-${branch.idx}">—</div><div class="lbl">إجمالي</div></div>
+</div>
+<div class="filter-bar" style="margin-top:12px">
+<select id="branch-filter-status-${branch.idx}" onchange="renderBranchDashboard(${branch.idx})">
+<option value="all">الكل</option>
+<option value="diff">مختلف فقط</option>
+<option value="ok">مطابق فقط</option>
+</select>
+<input type="text" id="branch-filter-search-${branch.idx}" placeholder="بحث باسم الصنف…" oninput="renderBranchDashboard(${branch.idx})">
+</div>
+<div class="tbl-wrap" style="max-height:500px;overflow:auto;margin-top:12px">
+<table id="branch-tbl-${branch.idx}">
+<thead>
+<tr>
+<th>الصنف</th>
+<th>الوارد بالمركز</th>
+<th>المنصرف من المركز</th>
+<th>المستلم بالفرع</th>
+<th>الفارق</th>
+<th>الحالة</th>
+</tr>
+</thead>
+<tbody id="branch-tbl-body-${branch.idx}"></tbody>
+</table>
+</div>
+`;
+dashboard.appendChild(div);
+
+// populate branch dashboard data
+renderBranchDashboard(branch.idx);
+}
+
+function renderBranchDashboard(idx){
+const branch = branches.find(b=>b.idx===idx);
+if(!branch || !branch.data) return;
+
+const rows = matchItems(mainData, branch.data);
+let totalDiff=0, totalOk=0;
+rows.forEach(r=>{if(r.flag==='diff'||r.flag==='unmatched')totalDiff++;else totalOk++;});
+document.getElementById(`branch-st-ok-${idx}`).textContent = totalOk;
+document.getElementById(`branch-st-diff-${idx}`).textContent = totalDiff;
+document.getElementById(`branch-st-total-${idx}`).textContent = rows.length;
+
+// filter
+const fs = document.getElementById(`branch-filter-status-${idx}`).value;
+const fq = document.getElementById(`branch-filter-search-${idx}`).value.trim().toLowerCase();
+let view = rows;
+if(fs==='diff') view = view.filter(r=>r.flag!=='ok');
+if(fs==='ok') view = view.filter(r=>r.flag==='ok');
+if(fq) view = view.filter(r=>r.itemName.toLowerCase().includes(fq));
+
+const tbody = document.getElementById(`branch-tbl-body-${idx}`);
+tbody.innerHTML = '';
+if(!view.length){
+tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:32px">لا توجد نتائج</td></tr>';
+return;
+}
+view.forEach(r=>{
+const tr = document.createElement('tr');
+tr.className = r.flag==='ok'?'ok-row':'diff-row';
+const badge = r.flag==='ok'
+?'<span class="badge-ok">مطابق</span>'
+:'<span class="badge-diff">يحتاج مراجعة</span>';
+const diffStr = r.diff==null
+?'<span style="color:var(--muted)">—</span>'
+:`<span style="color:${r.diff>0?'var(--red)':'var(--green)'};font-weight:700">${r.diff>0?'+':''}${r.diff}</span>`;
+tr.innerHTML = `
+<td>${esc(r.itemName)}</td>
+<td>${r.mainQtyIn}</td>
+<td>${r.mainQtyOut}</td>
+<td>${r.received}</td>
+<td>${diffStr}</td>
+<td>${badge}</td>
+`;
+tbody.appendChild(tr);
+});
+}
+
+function hideBranchDashboard(){
+document.getElementById('branch-dashboards').innerHTML = '';
+}
+
+/* ── Utils ── */
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function toast(msg){
+const t = document.getElementById('toast');
+t.textContent = msg; t.classList.add('show');
+setTimeout(()=>t.classList.remove('show'), 2800);
+}
+</script>
+</body>
+</html>
