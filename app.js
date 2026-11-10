@@ -13,10 +13,13 @@ document.addEventListener('DOMContentLoaded', () => {
     return {
       id,
       src: `images/img_${numStr}.jpeg`,
-      alt: `شاهد من ملف إنجاز المعلم محمد العربي (${id})`,
+      alt: id === 68 ? 'صورة المعلم محمد العربي عبدالسميع إبراهيم' : `شاهد من ملف إنجاز المعلم محمد العربي (${id})`,
       category
     };
   });
+
+  const portraitIndex = allImages.findIndex((image) => image.id === 68);
+  if (portraitIndex > 0) allImages.unshift(allImages.splice(portraitIndex, 1)[0]);
 
   // 2. Hero Slider logic
   initHeroSlider();
@@ -61,9 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Update Thumbnails
     document.querySelectorAll('.thumb-item').forEach((thumb, idx) => {
       thumb.classList.toggle('active', idx === currentMainIndex);
-      if (idx === currentMainIndex) {
-        thumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-      }
+      // Autoplay updates thumbnails only; it must not change the document's vertical position.
     });
   }
 
@@ -171,6 +172,20 @@ document.addEventListener('DOMContentLoaded', () => {
   lightbox.addEventListener('click', (e) => {
     if (e.target === lightbox) lightbox.classList.remove('active');
   });
+
+  const backToTopButton = document.getElementById('back-to-top');
+  if (backToTopButton) {
+    const updateBackToTopVisibility = () => {
+      backToTopButton.hidden = window.scrollY < 400;
+    };
+
+    window.addEventListener('scroll', updateBackToTopVisibility, { passive: true });
+    backToTopButton.addEventListener('click', () => {
+      const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+      window.scrollTo({ top: 0, behavior });
+    });
+    updateBackToTopVisibility();
+  }
 
   // 6. Live Edit Mode Toggle (الميزة المطلوبة: إكسس والتعديل)
   const toggleEditBtn = document.getElementById('toggle-edit-btn');
